@@ -8,11 +8,15 @@ const tempBookList = [
   { id: 5, title: "The Witcher", author: "Andrzej Sapkowski" },
 ];
 
-const DropdownMenu = () => {
+const DropdownMenu = ({ onBookChange }) => {
   const [selectedBook, setSelectedBook] = useState(tempBookList[0].id);
+  const SelectionChangeHandler = (event) => {
+    setSelectedBook(event.target.value);
+    onBookChange(event.target.value);
+  };
   return (
     <div>
-      <select onChange={(e) => setSelectedBook(e.target.value)}>
+      <select onChange={SelectionChangeHandler}>
         {tempBookList.map((book) => (
           <option key={book.id} value={book.id}>
             {book.title}
