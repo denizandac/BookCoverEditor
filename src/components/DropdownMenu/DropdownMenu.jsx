@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from "react";
+import classes from "./DropdownMenu.module.css";
 
 const DropdownMenu = ({ onBookChange }) => {
   const [books, setBooks] = useState([]);
   const [selectedBook, setSelectedBook] = useState(0);
+  const [isFetched, setIsFetched] = useState(false);
+
+  function capitalizeFirstLetter(str) {
+    return str.toLowerCase().replace(/^.|\s\S/g, function (match) {
+      return match.toUpperCase();
+    });
+  }
 
   useEffect(() => {
+    if (isFetched) return;
     const fetchBooks = async () => {
       const apiKey = "d6ABOtTpsNM0Th0gDAM0sIV6vvK9vi1c";
       const apiUrl = `https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=${apiKey}`;
@@ -15,18 +24,18 @@ const DropdownMenu = ({ onBookChange }) => {
 
         const booksData = data.results.books.slice(0, 10).map((book) => ({
           id: book.rank,
-          title: book.title.toLowerCase(),
-          author: book.author.toLowerCase(),
+          title: capitalizeFirstLetter(book.title),
+          author: book.author,
         }));
 
         setBooks(booksData);
+        setIsFetched(true);
       } catch (error) {
         console.error("Error fetching book data:", error);
       }
     };
-
     fetchBooks();
-  }, []);
+  }, [isFetched]);
 
   useEffect(() => {
     //console.log("Selected book changed:", selectedBook);
@@ -34,16 +43,21 @@ const DropdownMenu = ({ onBookChange }) => {
   }, [selectedBook, onBookChange, books]);
 
   const handleSelectionChange = (event) => {
-    setSelectedBook(event.target.value);
-    onBookChange(books[selectedBook]);
+    const newSelectedBook = event.target.value;
+    setSelectedBook(newSelectedBook);
+    onBookChange(books[newSelectedBook]);
   };
 
   return (
     <div>
-      <select onChange={handleSelectionChange} value={selectedBook}>
+      <select
+        className={classes.dropdown}
+        onChange={handleSelectionChange}
+        value={selectedBook}
+      >
         <option key={0} value={0}>
           {" "}
-          Select book to edit it's cover page.{" "}
+          Select a book to edit it's cover page.{" "}
         </option>
         {books.map((book) => (
           <option key={book.id} value={book.id}>
