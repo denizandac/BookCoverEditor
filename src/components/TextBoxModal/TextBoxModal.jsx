@@ -1,25 +1,44 @@
 import React, { useState } from "react";
+import classes from "./TextBoxModal.module.css";
 
 const TexBoxModal = ({ onUpdateStyle, id }) => {
+  const [selectedOption, setSelectedOption] = useState("title");
   const [fontSize, setFontSize] = useState("16px");
   const [color, setColor] = useState("black");
   const [letterSpacing, setLetterSpacing] = useState("normal");
 
   const handleUpdateStyle = () => {
-    // Güncellenmiş stil bilgilerini TextBox bileşenine ilet
     onUpdateStyle({
       fontSize,
       color,
       letterSpacing,
+      selectedOption,
     });
-
-    // Modal'ı kapat
-    // Modal'ı kapatma işlemleri burada yapılabilir
   };
 
   return (
-    <div className="modal">
-      <h2>Text Style Settings</h2>
+    <div className={classes.modal}>
+      <h2>Select a textbox and style the text</h2>
+      <div className="radio">
+        <label>
+          <input
+            type="radio"
+            value="title"
+            checked={selectedOption === "title"}
+            onChange={() => setSelectedOption("title")}
+          />
+          Title
+        </label>
+        <label>
+          <input
+            type="radio"
+            value="author"
+            checked={selectedOption === "author"}
+            onChange={() => setSelectedOption("author")}
+          />
+          Author
+        </label>
+      </div>
       <label>
         Font Size:
         <select value={fontSize} onChange={(e) => setFontSize(e.target.value)}>
