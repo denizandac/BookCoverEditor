@@ -1,15 +1,16 @@
 import React, { useRef, useState, useEffect } from "react";
 
-const TextBox = ({ id, text, onTextBoxDragEnd }) => {
+const TextBox = ({
+  text,
+  onTextBoxDragEnd,
+  draggableAreaRef,
+  onClick,
+  style,
+}) => {
   const textBoxRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isDraggingEnded, setIsDraggingEnded] = useState(false);
-  const [style, setStyle] = useState({
-    fontSize: 16,
-    color: "black",
-    letterSpacing: 0,
-  });
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -17,8 +18,21 @@ const TextBox = ({ id, text, onTextBoxDragEnd }) => {
         const left = e.clientX - offset.x;
         const top = e.clientY - offset.y;
 
-        textBoxRef.current.style.left = `${left}px`;
-        textBoxRef.current.style.top = `${top}px`;
+        const draggableAreaRect =
+          draggableAreaRef.current.getBoundingClientRect();
+        const textBoxRect = textBoxRef.current.getBoundingClientRect();
+
+        const newLeft = Math.min(
+          Math.max(left, draggableAreaRect.left),
+          draggableAreaRect.right - textBoxRect.width
+        );
+        const newTop = Math.min(
+          Math.max(top, draggableAreaRect.top),
+          draggableAreaRect.bottom - textBoxRect.height
+        );
+
+        textBoxRef.current.style.left = `${newLeft}px`;
+        textBoxRef.current.style.top = `${newTop}px`;
       }
     };
 
@@ -34,7 +48,7 @@ const TextBox = ({ id, text, onTextBoxDragEnd }) => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [isDragging, offset]);
+  }, [isDragging, offset, draggableAreaRef]);
 
   useEffect(() => {
     if (isDraggingEnded) {
@@ -52,10 +66,6 @@ const TextBox = ({ id, text, onTextBoxDragEnd }) => {
     });
   };
 
-  const updateStyle = ({ fontSize, color, letterSpacing }) => {
-    setStyle({ fontSize, color, letterSpacing });
-  };
-
   return (
     <div
       ref={textBoxRef}
@@ -65,12 +75,15 @@ const TextBox = ({ id, text, onTextBoxDragEnd }) => {
         backgroundColor: "transparent",
         cursor: "grab",
         userSelect: "none",
-        border: "1px solid black",
         fontSize: `${style.fontSize}px`,
         color: style.color,
         letterSpacing: `${style.letterSpacing}px`,
+        ...style,
       }}
-      onMouseDown={handleMouseDown}
+      onMouseDown={(e) => {
+        onClick();
+        handleMouseDown(e);
+      }}
     >
       <h2>{text}</h2>
     </div>
