@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import TextBoxModal from "../TextBoxModal/TextBoxModal";
 
 const TextBox = ({ id, text, onTextBoxDragEnd }) => {
   const textBoxRef = useRef(null);
@@ -11,7 +10,6 @@ const TextBox = ({ id, text, onTextBoxDragEnd }) => {
     color: "black",
     letterSpacing: 0,
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -54,17 +52,8 @@ const TextBox = ({ id, text, onTextBoxDragEnd }) => {
     });
   };
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
   const updateStyle = ({ fontSize, color, letterSpacing }) => {
     setStyle({ fontSize, color, letterSpacing });
-    closeModal();
   };
 
   return (
@@ -84,8 +73,6 @@ const TextBox = ({ id, text, onTextBoxDragEnd }) => {
       onMouseDown={handleMouseDown}
     >
       <h2>{text}</h2>
-      <button onClick={openModal}>Open Modal</button>
-      {isModalOpen && <TextBoxModal onUpdateStyle={updateStyle} />}
     </div>
   );
 };

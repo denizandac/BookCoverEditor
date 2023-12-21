@@ -2,6 +2,7 @@ import { useState } from "react";
 import Button from "../Button/Button";
 import TopDownMenu from "../TopDownMenu/TopDownMenu";
 import TabContent from "../TabContent/TabContent";
+import classes from "./PageContent.module.css";
 
 const PageContent = () => {
   const [tabIndex, setTabIndex] = useState(0);
@@ -12,16 +13,24 @@ const PageContent = () => {
     setTabIndex((prevTabIndex) => prevTabIndex + 1);
   };
   return (
-    <>
-      {tabIndex > 0 && <Button onClick={navigatePrevTab}>Prev</Button>}
+    <div className={classes.pageContent}>
+      {tabIndex > 0 && (
+        <Button className={classes.backButton} onClick={navigatePrevTab}>
+          Back
+        </Button>
+      )}
       <div>
         <TopDownMenu selectedTab={tabIndex} setSelectedTab={setTabIndex} />
       </div>
       <div>
         <TabContent activeTab={tabIndex} />
       </div>
-      {tabIndex < 2 && <Button onClick={navigateNextTab}>Next</Button>}
-    </>
+      {tabIndex < 2 && (
+        <Button className={classes.nextButton} onClick={navigateNextTab}>
+          Next
+        </Button>
+      )}
+    </div>
   );
 };
 

@@ -6,11 +6,11 @@ import { useState } from "react";
 const TabContent = ({ activeTab }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedBook, setSelectedBook] = useState(null);
+
   const bookChangeHandler = (book) => {
     setSelectedBook(book);
   };
   const imageUploadHandler = (image) => {
-    console.log(image);
     setSelectedImage(image);
   };
   return (
