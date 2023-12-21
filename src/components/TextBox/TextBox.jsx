@@ -1,9 +1,17 @@
 import React, { useRef, useState, useEffect } from "react";
+import TextBoxModal from "../TextBoxModal/TextBoxModal";
 
-const TextBox = ({ text }) => {
+const TextBox = ({ id, text, onTextBoxDragEnd }) => {
   const textBoxRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [isDraggingEnded, setIsDraggingEnded] = useState(false);
+  const [style, setStyle] = useState({
+    fontSize: 16,
+    color: "black",
+    letterSpacing: 0,
+  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -11,32 +19,31 @@ const TextBox = ({ text }) => {
         const left = e.clientX - offset.x;
         const top = e.clientY - offset.y;
 
-        const parentRect =
-          textBoxRef.current.parentElement.getBoundingClientRect();
-        const rect = textBoxRef.current.getBoundingClientRect();
-
-        const minX = parentRect.left;
-        const minY = parentRect.top;
-        const maxX = parentRect.right - rect.width;
-        const maxY = parentRect.bottom - rect.height;
-
-        textBoxRef.current.style.left = `${Math.min(
-          Math.max(left, minX),
-          maxX
-        )}px`;
-        textBoxRef.current.style.top = `${Math.min(
-          Math.max(top, minY),
-          maxY
-        )}px`;
+        textBoxRef.current.style.left = `${left}px`;
+        textBoxRef.current.style.top = `${top}px`;
       }
     };
 
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      setIsDraggingEnded(true);
+    };
+
     document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isDragging, offset]);
+
+  useEffect(() => {
+    if (isDraggingEnded) {
+      onTextBoxDragEnd && onTextBoxDragEnd(textBoxRef.current);
+      setIsDraggingEnded(false);
+    }
+  }, [isDraggingEnded, onTextBoxDragEnd]);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -47,8 +54,17 @@ const TextBox = ({ text }) => {
     });
   };
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const updateStyle = ({ fontSize, color, letterSpacing }) => {
+    setStyle({ fontSize, color, letterSpacing });
+    closeModal();
   };
 
   return (
@@ -61,11 +77,15 @@ const TextBox = ({ text }) => {
         cursor: "grab",
         userSelect: "none",
         border: "1px solid black",
+        fontSize: `${style.fontSize}px`,
+        color: style.color,
+        letterSpacing: `${style.letterSpacing}px`,
       }}
       onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
     >
       <h2>{text}</h2>
+      <button onClick={openModal}>Open Modal</button>
+      {isModalOpen && <TextBoxModal onUpdateStyle={updateStyle} />}
     </div>
   );
 };
