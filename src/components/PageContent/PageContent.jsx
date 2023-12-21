@@ -23,9 +23,9 @@ const PageContent = () => {
         <TopDownMenu selectedTab={tabIndex} setSelectedTab={setTabIndex} />
       </div>
       <div>
-        <TabContent activeTab={tabIndex} />
+        <TabContent activeTab={tabIndex} setActiveTab={setTabIndex} />
       </div>
-      {tabIndex < 2 && (
+      {tabIndex < 1 && (
         <Button className={classes.nextButton} onClick={navigateNextTab}>
           Next
         </Button>

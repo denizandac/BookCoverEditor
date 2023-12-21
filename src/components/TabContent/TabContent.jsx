@@ -3,7 +3,7 @@ import DropdownMenu from "../DropdownMenu/DropdownMenu";
 import ImageUploader from "../ImageUploader/ImageUploader";
 import { useState } from "react";
 
-const TabContent = ({ activeTab }) => {
+const TabContent = ({ activeTab, setActiveTab }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedBook, setSelectedBook] = useState(null);
 
@@ -13,6 +13,9 @@ const TabContent = ({ activeTab }) => {
   const imageUploadHandler = (image) => {
     setSelectedImage(image);
   };
+  const ActiveTabHandler = (tabIndex) => {
+    setActiveTab(tabIndex);
+  };
   return (
     <>
       {activeTab === 0 && <DropdownMenu onBookChange={bookChangeHandler} />}
@@ -20,6 +23,7 @@ const TabContent = ({ activeTab }) => {
         <ImageUploader
           onUpload={imageUploadHandler}
           book={selectedBook ? selectedBook : null}
+          setActiveTab={ActiveTabHandler}
         />
       )}
       {activeTab === 2 && <DownloadImage imageSrc={selectedImage} />}

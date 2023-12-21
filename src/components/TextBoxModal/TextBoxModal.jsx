@@ -1,50 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import classes from "./TextBoxModal.module.css";
 
-const TexBoxModal = ({ onUpdateStyle, id }) => {
-  const [selectedOption, setSelectedOption] = useState("title");
+const TextBoxModal = ({ onUpdateStyle, onResetStyle }) => {
   const [fontSize, setFontSize] = useState("16px");
   const [color, setColor] = useState("black");
   const [letterSpacing, setLetterSpacing] = useState("normal");
 
-  const handleUpdateStyle = () => {
+  useEffect(() => {
     onUpdateStyle({
       fontSize,
       color,
       letterSpacing,
-      selectedOption,
     });
-  };
+  }, [fontSize, color, letterSpacing]);
 
   return (
     <div className={classes.modal}>
       <h2>Select a textbox and style the text</h2>
-      <div className="radio">
-        <label>
-          <input
-            type="radio"
-            value="title"
-            checked={selectedOption === "title"}
-            onChange={() => setSelectedOption("title")}
-          />
-          Title
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="author"
-            checked={selectedOption === "author"}
-            onChange={() => setSelectedOption("author")}
-          />
-          Author
-        </label>
-      </div>
       <label>
         Font Size:
         <select value={fontSize} onChange={(e) => setFontSize(e.target.value)}>
-          <option value="14px">14px</option>
-          <option value="16px">16px</option>
+          <option value="14px">10px</option>
+          <option value="16px">14px</option>
           <option value="18px">18px</option>
+          <option value="22px">22px</option>
         </select>
       </label>
 
@@ -70,10 +49,8 @@ const TexBoxModal = ({ onUpdateStyle, id }) => {
           <option value="4px">4px</option>
         </select>
       </label>
-
-      <button onClick={handleUpdateStyle}>Apply Changes</button>
     </div>
   );
 };
 
-export default TexBoxModal;
+export default TextBoxModal;
