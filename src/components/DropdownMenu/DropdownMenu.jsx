@@ -1,30 +1,68 @@
-import { useState } from "react";
-
-const tempBookList = [
-  { id: 1, title: "The Lord of the Rings", author: "J. R. R. Tolkien" },
-  { id: 2, title: "The Harry Potter Series", author: "J. K. Rowling" },
-  { id: 3, title: "Dune", author: "Frank Herbert" },
-  { id: 4, title: "The Chronicles of Narnia", author: "C. S. Lewis" },
-  { id: 5, title: "The Witcher", author: "Andrzej Sapkowski" },
-];
+import React, { useState, useEffect } from "react";
 
 const DropdownMenu = ({ onBookChange }) => {
-  const [selectedBook, setSelectedBook] = useState(tempBookList[0].id);
-  const SelectionChangeHandler = (event) => {
+  const [books, setBooks] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(0);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      const apiKey = "d6ABOtTpsNM0Th0gDAM0sIV6vvK9vi1c";
+      const apiUrl = `https://api.nytimes.com/svc/books/v3/lists/current/hardcover-fiction.json?api-key=${apiKey}`;
+
+      try {
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        const booksData = data.results.books.slice(0, 10).map((book) => ({
+          id: book.rank,
+          title: book.title.toLowerCase(),
+          author: book.author.toLowerCase(),
+        }));
+
+        setBooks(booksData);
+      } catch (error) {
+        console.error("Error fetching book data:", error);
+      }
+    };
+
+    fetchBooks();
+  }, []);
+
+  useEffect(() => {
+    //console.log("Selected book changed:", selectedBook);
+    onBookChange(books[selectedBook]);
+  }, [selectedBook, onBookChange, books]);
+
+  const handleSelectionChange = (event) => {
     setSelectedBook(event.target.value);
-    onBookChange(event.target.value);
+    onBookChange(books[selectedBook]);
   };
+
   return (
     <div>
-      <select onChange={SelectionChangeHandler}>
-        {tempBookList.map((book) => (
+      <select onChange={handleSelectionChange} value={selectedBook}>
+        <option key={0} value={0}>
+          {" "}
+          Select book to edit it's cover page.{" "}
+        </option>
+        {books.map((book) => (
           <option key={book.id} value={book.id}>
             {book.title}
           </option>
         ))}
       </select>
-      <p>Selected Book: {tempBookList[selectedBook - 1]?.title}</p>
-      <p>Book's author: {tempBookList[selectedBook - 1]?.author}</p>
+      {selectedBook > 0 && (
+        <>
+          <p>
+            Selected Book:{" "}
+            {books.find((book) => book.id === +selectedBook)?.title}
+          </p>
+          <p>
+            Book's author:{" "}
+            {books.find((book) => book.id === +selectedBook)?.author}
+          </p>
+        </>
+      )}
     </div>
   );
 };
