@@ -1,0 +1,21 @@
+.modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  padding: 2%;
+  width: 400px;
+}
+
+.modal h2 {
+  font-size: 1.2rem;
+}
+
+.radio {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto;
+}
